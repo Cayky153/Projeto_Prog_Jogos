@@ -65,4 +65,29 @@ Não. A reação muda de dois jeitos:
 - **Entre pares diferentes:** Jogador × Obstáculo sempre mata o jogador, enquanto Jogador × Inimigo pode matar o jogador ou o inimigo, e Jogador × Plataforma/Chão só interrompe o movimento.
 - **Dentro do mesmo par, dependendo do lado da colisão:** em Jogador × Inimigo, colidir por cima mata o inimigo e dá impulso, e colidir pelos lados ou por baixo mata o jogador. Em Jogador × Plataforma, colidir por cima mantém o jogador no chão, por baixo zera a velocidadeY e ele volta a cair, e pela esquerda o cenário para.
 
-Os pares Jogador × Plataforma e Jogador × Chão têm reações quase idênticas, então
+Os pares Jogador × Plataforma e Jogador × Chão têm reações quase idênticas, então podem compartilhar o mesmo código.
+
+## 5. Comunicação
+
+Uma entidade aciona ou lê a outra diretamente, ou por um terceiro (o jogo, o mundo, um gerenciador)?
+
+- GameManager → Inimigo / Plataforma / Obstáculo / Chão / FundoParallax: **direto**. O GameManager cria (spawna) cada uma e altera a propriedade velocidade delas. Ele é o único responsável por aumentar ou reduzir a velocidade do cenário, incluindo zerá-la quando o jogador bate na lateral de uma Plataforma ou Chão (e restaurá-la quando o jogador deixa de estar bloqueado).
+- Jogador ↔ Inimigo / Obstáculo / Plataforma / Chão: **por um terceiro (o GameManager)**. A cada quadro, o GameManager testa as colisões e aplica a reação: muda isAlive do Jogador e do Inimigo, altera velocidadeY e podePular do Jogador, ou zera a velocidade do cenário. O Jogador e as outras entidades não se conhecem.
+- GameManager → Placar: **direto**. O GameManager entrega pontuacao e distanciaPercorrida para o Placar desenhar.
+
+## 6. Falsas entidades
+
+Algo parece entidade, mas não se atualiza sozinho (placar, cenário, som, câmera)?
+
+- Placar
+- Câmera
+
+## 7. Repetições
+
+Duas ou mais entidades repetem o mesmo comportamento? Qual, e em quais?
+
+- **Mover no eixo X para a esquerda:** Inimigo, Plataforma, Obstáculo, Chão e FundoParallax.
+- **Reação de colisão por lado:** Jogador × Plataforma e Jogador × Chão repetem a mesma lógica (parar por cima, cair por baixo, parar o cenário pela esquerda).
+
+## Pergunta que mais travou
+A 5, pois antes não havia feito um GameManager, então ficou algumas inconsistências como "Quem vai atualizar o placar?", "Como vai as velocidades vao ser atualizadas? vai ser uma por uma?" "Quem vai criar os objetos do cenário" então fiquei nessa dúvida por muito tempo, o que dificultou o 5, até que eu tive a ideia de criar um gamemanager para unificar isso
